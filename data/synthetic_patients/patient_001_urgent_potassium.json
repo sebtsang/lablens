@@ -3,239 +3,614 @@
   "type": "transaction",
   "entry": [
     {
-      "fullUrl": "urn:uuid:lablens-patient-001",
+      "fullUrl": "urn:uuid:55a7fa78-4d28-5661-9350-7439ebf4db03",
       "resource": {
         "resourceType": "Patient",
-        "id": "lablens-patient-001",
+        "id": "55a7fa78-4d28-5661-9350-7439ebf4db03",
         "identifier": [
-          { "system": "https://lablens.example.org/patient", "value": "LABLENS-001" }
+          {
+            "system": "https://lablens.example.org/synthea-equivalent",
+            "value": "patient-001"
+          }
         ],
-        "name": [{ "family": "Demo", "given": ["Patient_001_Urgent_Potassium"] }],
+        "name": [
+          {
+            "family": "Demo",
+            "given": [
+              "Patient_001_Urgent_Potassium"
+            ]
+          }
+        ],
         "gender": "female",
         "birthDate": "1958-03-14"
       },
-      "request": { "method": "PUT", "url": "Patient/lablens-patient-001" }
+      "request": {
+        "method": "POST",
+        "url": "Patient",
+        "ifNoneExist": "identifier=https://lablens.example.org/synthea-equivalent|patient-001"
+      }
     },
     {
-      "fullUrl": "urn:uuid:lablens-001-cond-ckd",
+      "fullUrl": "urn:uuid:42d229b0-1a12-5ba8-982d-bf1542084a12",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "42d229b0-1a12-5ba8-982d-bf1542084a12",
+        "identifier": [
+          {
+            "system": "https://lablens.example.org/synthea-equivalent",
+            "value": "patient-001-encounter-recent"
+          }
+        ],
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "Ambulatory"
+        },
+        "type": [
+          {
+            "text": "Heart failure follow-up"
+          }
+        ],
+        "subject": {
+          "reference": "urn:uuid:55a7fa78-4d28-5661-9350-7439ebf4db03"
+        },
+        "period": {
+          "start": "2026-04-15",
+          "end": "2026-04-15"
+        },
+        "reasonCode": [
+          {
+            "text": "Heart failure follow-up"
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "Encounter",
+        "ifNoneExist": "identifier=https://lablens.example.org/synthea-equivalent|patient-001-encounter-recent"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:471de2b6-0d79-518e-adcd-c2d162e0c7d9",
       "resource": {
         "resourceType": "Condition",
-        "id": "lablens-001-cond-ckd",
-        "subject": { "reference": "Patient/lablens-patient-001" },
+        "id": "471de2b6-0d79-518e-adcd-c2d162e0c7d9",
+        "identifier": [
+          {
+            "system": "https://lablens.example.org/synthea-equivalent",
+            "value": "patient-001-cond-0"
+          }
+        ],
         "clinicalStatus": {
           "coding": [
-            { "system": "http://terminology.hl7.org/CodeSystem/condition-clinical", "code": "active" }
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
           ]
         },
         "verificationStatus": {
           "coding": [
-            { "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status", "code": "confirmed" }
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
           ]
         },
         "code": {
-          "coding": [{ "system": "http://snomed.info/sct", "code": "433144002", "display": "Chronic kidney disease stage 3b" }],
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "433144002",
+              "display": "Chronic kidney disease stage 3b"
+            }
+          ],
           "text": "Chronic kidney disease stage 3b"
+        },
+        "subject": {
+          "reference": "urn:uuid:55a7fa78-4d28-5661-9350-7439ebf4db03"
         },
         "onsetDateTime": "2022-06-01"
       },
-      "request": { "method": "PUT", "url": "Condition/lablens-001-cond-ckd" }
+      "request": {
+        "method": "POST",
+        "url": "Condition",
+        "ifNoneExist": "identifier=https://lablens.example.org/synthea-equivalent|patient-001-cond-0"
+      }
     },
     {
-      "fullUrl": "urn:uuid:lablens-001-cond-htn",
+      "fullUrl": "urn:uuid:be58a11f-984e-559f-9b58-1c64579b38f0",
       "resource": {
         "resourceType": "Condition",
-        "id": "lablens-001-cond-htn",
-        "subject": { "reference": "Patient/lablens-patient-001" },
-        "clinicalStatus": { "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/condition-clinical", "code": "active" }] },
+        "id": "be58a11f-984e-559f-9b58-1c64579b38f0",
+        "identifier": [
+          {
+            "system": "https://lablens.example.org/synthea-equivalent",
+            "value": "patient-001-cond-1"
+          }
+        ],
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
         "code": {
-          "coding": [{ "system": "http://snomed.info/sct", "code": "59621000", "display": "Essential hypertension" }],
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "59621000",
+              "display": "Essential hypertension"
+            }
+          ],
           "text": "Essential hypertension"
+        },
+        "subject": {
+          "reference": "urn:uuid:55a7fa78-4d28-5661-9350-7439ebf4db03"
         },
         "onsetDateTime": "2015-04-12"
       },
-      "request": { "method": "PUT", "url": "Condition/lablens-001-cond-htn" }
+      "request": {
+        "method": "POST",
+        "url": "Condition",
+        "ifNoneExist": "identifier=https://lablens.example.org/synthea-equivalent|patient-001-cond-1"
+      }
     },
     {
-      "fullUrl": "urn:uuid:lablens-001-cond-hf",
+      "fullUrl": "urn:uuid:3b527140-236c-5957-bf86-3072976c5962",
       "resource": {
         "resourceType": "Condition",
-        "id": "lablens-001-cond-hf",
-        "subject": { "reference": "Patient/lablens-patient-001" },
-        "clinicalStatus": { "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/condition-clinical", "code": "active" }] },
+        "id": "3b527140-236c-5957-bf86-3072976c5962",
+        "identifier": [
+          {
+            "system": "https://lablens.example.org/synthea-equivalent",
+            "value": "patient-001-cond-2"
+          }
+        ],
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
         "code": {
-          "coding": [{ "system": "http://snomed.info/sct", "code": "703272007", "display": "Heart failure with reduced ejection fraction" }],
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "703272007",
+              "display": "Heart failure with reduced ejection fraction"
+            }
+          ],
           "text": "Heart failure with reduced ejection fraction"
+        },
+        "subject": {
+          "reference": "urn:uuid:55a7fa78-4d28-5661-9350-7439ebf4db03"
         },
         "onsetDateTime": "2020-11-03"
       },
-      "request": { "method": "PUT", "url": "Condition/lablens-001-cond-hf" }
+      "request": {
+        "method": "POST",
+        "url": "Condition",
+        "ifNoneExist": "identifier=https://lablens.example.org/synthea-equivalent|patient-001-cond-2"
+      }
     },
     {
-      "fullUrl": "urn:uuid:lablens-001-med-lisinopril",
+      "fullUrl": "urn:uuid:439a06b2-0560-5488-a83e-cf4142a3df49",
       "resource": {
         "resourceType": "MedicationRequest",
-        "id": "lablens-001-med-lisinopril",
+        "id": "439a06b2-0560-5488-a83e-cf4142a3df49",
+        "identifier": [
+          {
+            "system": "https://lablens.example.org/synthea-equivalent",
+            "value": "patient-001-med-0"
+          }
+        ],
         "status": "active",
         "intent": "order",
-        "subject": { "reference": "Patient/lablens-patient-001" },
-        "authoredOn": "2024-08-10",
-        "medicationCodeableConcept": {
-          "coding": [{ "system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "314076", "display": "Lisinopril 20 MG Oral Tablet" }],
-          "text": "Lisinopril 20 mg oral tablet"
+        "subject": {
+          "reference": "urn:uuid:55a7fa78-4d28-5661-9350-7439ebf4db03"
         },
-        "dosageInstruction": [{ "text": "20 mg PO daily" }]
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "314076",
+              "display": "Lisinopril 20 MG Oral Tablet"
+            }
+          ],
+          "text": "Lisinopril 20 MG Oral Tablet"
+        },
+        "dosageInstruction": [
+          {
+            "text": "20 mg PO daily"
+          }
+        ]
       },
-      "request": { "method": "PUT", "url": "MedicationRequest/lablens-001-med-lisinopril" }
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest",
+        "ifNoneExist": "identifier=https://lablens.example.org/synthea-equivalent|patient-001-med-0"
+      }
     },
     {
-      "fullUrl": "urn:uuid:lablens-001-med-spironolactone",
+      "fullUrl": "urn:uuid:b0fbb6ef-34f2-5dd2-bf21-57f734a7f1e2",
       "resource": {
         "resourceType": "MedicationRequest",
-        "id": "lablens-001-med-spironolactone",
+        "id": "b0fbb6ef-34f2-5dd2-bf21-57f734a7f1e2",
+        "identifier": [
+          {
+            "system": "https://lablens.example.org/synthea-equivalent",
+            "value": "patient-001-med-1"
+          }
+        ],
         "status": "active",
         "intent": "order",
-        "subject": { "reference": "Patient/lablens-patient-001" },
-        "authoredOn": "2024-09-05",
-        "medicationCodeableConcept": {
-          "coding": [{ "system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "313096", "display": "Spironolactone 25 MG Oral Tablet" }],
-          "text": "Spironolactone 25 mg oral tablet"
+        "subject": {
+          "reference": "urn:uuid:55a7fa78-4d28-5661-9350-7439ebf4db03"
         },
-        "dosageInstruction": [{ "text": "25 mg PO daily" }]
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "313096",
+              "display": "Spironolactone 25 MG Oral Tablet"
+            }
+          ],
+          "text": "Spironolactone 25 MG Oral Tablet"
+        },
+        "dosageInstruction": [
+          {
+            "text": "25 mg PO daily"
+          }
+        ]
       },
-      "request": { "method": "PUT", "url": "MedicationRequest/lablens-001-med-spironolactone" }
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest",
+        "ifNoneExist": "identifier=https://lablens.example.org/synthea-equivalent|patient-001-med-1"
+      }
     },
     {
-      "fullUrl": "urn:uuid:lablens-001-med-ibuprofen",
+      "fullUrl": "urn:uuid:1f481267-3238-516d-934a-bfcb31e34426",
       "resource": {
         "resourceType": "MedicationRequest",
-        "id": "lablens-001-med-ibuprofen",
+        "id": "1f481267-3238-516d-934a-bfcb31e34426",
+        "identifier": [
+          {
+            "system": "https://lablens.example.org/synthea-equivalent",
+            "value": "patient-001-med-2"
+          }
+        ],
         "status": "active",
         "intent": "order",
-        "subject": { "reference": "Patient/lablens-patient-001" },
-        "authoredOn": "2026-04-08",
-        "medicationCodeableConcept": {
-          "coding": [{ "system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "310965", "display": "Ibuprofen 400 MG Oral Tablet" }],
-          "text": "Ibuprofen 400 mg oral tablet"
+        "subject": {
+          "reference": "urn:uuid:55a7fa78-4d28-5661-9350-7439ebf4db03"
         },
-        "dosageInstruction": [{ "text": "400 mg PO TID for back pain (started 3 weeks ago)" }]
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "310965",
+              "display": "Ibuprofen 400 MG Oral Tablet"
+            }
+          ],
+          "text": "Ibuprofen 400 MG Oral Tablet"
+        },
+        "dosageInstruction": [
+          {
+            "text": "400 mg PO TID for back pain (started 3 weeks ago)"
+          }
+        ]
       },
-      "request": { "method": "PUT", "url": "MedicationRequest/lablens-001-med-ibuprofen" }
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest",
+        "ifNoneExist": "identifier=https://lablens.example.org/synthea-equivalent|patient-001-med-2"
+      }
     },
     {
-      "fullUrl": "urn:uuid:lablens-001-med-furosemide",
+      "fullUrl": "urn:uuid:aa8755ff-58e1-5eaa-a56c-38b93ded703a",
       "resource": {
         "resourceType": "MedicationRequest",
-        "id": "lablens-001-med-furosemide",
+        "id": "aa8755ff-58e1-5eaa-a56c-38b93ded703a",
+        "identifier": [
+          {
+            "system": "https://lablens.example.org/synthea-equivalent",
+            "value": "patient-001-med-3"
+          }
+        ],
         "status": "active",
         "intent": "order",
-        "subject": { "reference": "Patient/lablens-patient-001" },
-        "authoredOn": "2024-08-10",
-        "medicationCodeableConcept": {
-          "coding": [{ "system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "313988", "display": "Furosemide 40 MG Oral Tablet" }],
-          "text": "Furosemide 40 mg oral tablet"
+        "subject": {
+          "reference": "urn:uuid:55a7fa78-4d28-5661-9350-7439ebf4db03"
         },
-        "dosageInstruction": [{ "text": "40 mg PO daily" }]
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "313988",
+              "display": "Furosemide 40 MG Oral Tablet"
+            }
+          ],
+          "text": "Furosemide 40 MG Oral Tablet"
+        },
+        "dosageInstruction": [
+          {
+            "text": "40 mg PO daily"
+          }
+        ]
       },
-      "request": { "method": "PUT", "url": "MedicationRequest/lablens-001-med-furosemide" }
+      "request": {
+        "method": "POST",
+        "url": "MedicationRequest",
+        "ifNoneExist": "identifier=https://lablens.example.org/synthea-equivalent|patient-001-med-3"
+      }
     },
     {
-      "fullUrl": "urn:uuid:lablens-001-allergy-pcn",
+      "fullUrl": "urn:uuid:8e2e017d-5109-53a7-984f-d7540926f90c",
       "resource": {
         "resourceType": "AllergyIntolerance",
-        "id": "lablens-001-allergy-pcn",
-        "patient": { "reference": "Patient/lablens-patient-001" },
+        "id": "8e2e017d-5109-53a7-984f-d7540926f90c",
+        "identifier": [
+          {
+            "system": "https://lablens.example.org/synthea-equivalent",
+            "value": "patient-001-allergy-0"
+          }
+        ],
+        "patient": {
+          "reference": "urn:uuid:55a7fa78-4d28-5661-9350-7439ebf4db03"
+        },
         "code": {
-          "coding": [{ "system": "http://snomed.info/sct", "code": "91936005", "display": "Allergy to penicillin" }],
-          "text": "Penicillin"
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "91936005",
+              "display": "Allergy to penicillin"
+            }
+          ],
+          "text": "Allergy to penicillin"
         },
         "criticality": "high",
         "reaction": [
-          { "manifestation": [{ "text": "Hives" }] }
+          {
+            "manifestation": [
+              {
+                "text": "Hives"
+              }
+            ]
+          }
         ]
       },
-      "request": { "method": "PUT", "url": "AllergyIntolerance/lablens-001-allergy-pcn" }
+      "request": {
+        "method": "POST",
+        "url": "AllergyIntolerance",
+        "ifNoneExist": "identifier=https://lablens.example.org/synthea-equivalent|patient-001-allergy-0"
+      }
     },
     {
-      "fullUrl": "urn:uuid:lablens-001-encounter-recent",
-      "resource": {
-        "resourceType": "Encounter",
-        "id": "lablens-001-encounter-recent",
-        "status": "finished",
-        "class": { "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode", "code": "AMB", "display": "Ambulatory" },
-        "type": [{ "text": "Office visit — heart failure follow-up" }],
-        "subject": { "reference": "Patient/lablens-patient-001" },
-        "period": { "start": "2026-04-15", "end": "2026-04-15" },
-        "reasonCode": [{ "text": "Heart failure follow-up" }]
-      },
-      "request": { "method": "PUT", "url": "Encounter/lablens-001-encounter-recent" }
-    },
-    {
-      "fullUrl": "urn:uuid:lablens-001-obs-k-current",
+      "fullUrl": "urn:uuid:68f6fdf0-6f34-53ef-b6ca-8bb27358f1e8",
       "resource": {
         "resourceType": "Observation",
-        "id": "lablens-001-obs-k-current",
+        "id": "68f6fdf0-6f34-53ef-b6ca-8bb27358f1e8",
+        "identifier": [
+          {
+            "system": "https://lablens.example.org/synthea-equivalent",
+            "value": "patient-001-obs-0"
+          }
+        ],
         "status": "final",
         "code": {
-          "coding": [{ "system": "http://loinc.org", "code": "2823-3", "display": "Potassium [Moles/volume] in Serum or Plasma" }],
-          "text": "Potassium serum"
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "2823-3",
+              "display": "Potassium [Moles/volume] in Serum or Plasma"
+            }
+          ],
+          "text": "Potassium [Moles/volume] in Serum or Plasma"
         },
-        "subject": { "reference": "Patient/lablens-patient-001" },
+        "subject": {
+          "reference": "urn:uuid:55a7fa78-4d28-5661-9350-7439ebf4db03"
+        },
         "effectiveDateTime": "2026-04-29",
-        "valueQuantity": { "value": 6.1, "unit": "mmol/L", "system": "http://unitsofmeasure.org", "code": "mmol/L" },
-        "referenceRange": [{ "low": { "value": 3.5, "unit": "mmol/L" }, "high": { "value": 5.0, "unit": "mmol/L" } }]
+        "valueQuantity": {
+          "value": 6.1,
+          "unit": "mmol/L",
+          "system": "http://unitsofmeasure.org",
+          "code": "mmol/L"
+        },
+        "referenceRange": [
+          {
+            "low": {
+              "value": 3.5,
+              "unit": "mmol/L"
+            },
+            "high": {
+              "value": 5.0,
+              "unit": "mmol/L"
+            }
+          }
+        ]
       },
-      "request": { "method": "PUT", "url": "Observation/lablens-001-obs-k-current" }
+      "request": {
+        "method": "POST",
+        "url": "Observation",
+        "ifNoneExist": "identifier=https://lablens.example.org/synthea-equivalent|patient-001-obs-0"
+      }
     },
     {
-      "fullUrl": "urn:uuid:lablens-001-obs-k-3wk",
+      "fullUrl": "urn:uuid:9d5f64ff-03db-5d22-b01d-527c9f7f0e0a",
       "resource": {
         "resourceType": "Observation",
-        "id": "lablens-001-obs-k-3wk",
+        "id": "9d5f64ff-03db-5d22-b01d-527c9f7f0e0a",
+        "identifier": [
+          {
+            "system": "https://lablens.example.org/synthea-equivalent",
+            "value": "patient-001-obs-1"
+          }
+        ],
         "status": "final",
         "code": {
-          "coding": [{ "system": "http://loinc.org", "code": "2823-3", "display": "Potassium [Moles/volume] in Serum or Plasma" }],
-          "text": "Potassium serum"
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "2823-3",
+              "display": "Potassium [Moles/volume] in Serum or Plasma"
+            }
+          ],
+          "text": "Potassium [Moles/volume] in Serum or Plasma"
         },
-        "subject": { "reference": "Patient/lablens-patient-001" },
+        "subject": {
+          "reference": "urn:uuid:55a7fa78-4d28-5661-9350-7439ebf4db03"
+        },
         "effectiveDateTime": "2026-04-08",
-        "valueQuantity": { "value": 5.4, "unit": "mmol/L", "system": "http://unitsofmeasure.org", "code": "mmol/L" },
-        "referenceRange": [{ "low": { "value": 3.5, "unit": "mmol/L" }, "high": { "value": 5.0, "unit": "mmol/L" } }]
+        "valueQuantity": {
+          "value": 5.4,
+          "unit": "mmol/L",
+          "system": "http://unitsofmeasure.org",
+          "code": "mmol/L"
+        },
+        "referenceRange": [
+          {
+            "low": {
+              "value": 3.5,
+              "unit": "mmol/L"
+            },
+            "high": {
+              "value": 5.0,
+              "unit": "mmol/L"
+            }
+          }
+        ]
       },
-      "request": { "method": "PUT", "url": "Observation/lablens-001-obs-k-3wk" }
+      "request": {
+        "method": "POST",
+        "url": "Observation",
+        "ifNoneExist": "identifier=https://lablens.example.org/synthea-equivalent|patient-001-obs-1"
+      }
     },
     {
-      "fullUrl": "urn:uuid:lablens-001-obs-k-3mo",
+      "fullUrl": "urn:uuid:f94bd2f6-6f0a-51cc-bb15-3efc2c6f59d5",
       "resource": {
         "resourceType": "Observation",
-        "id": "lablens-001-obs-k-3mo",
+        "id": "f94bd2f6-6f0a-51cc-bb15-3efc2c6f59d5",
+        "identifier": [
+          {
+            "system": "https://lablens.example.org/synthea-equivalent",
+            "value": "patient-001-obs-2"
+          }
+        ],
         "status": "final",
         "code": {
-          "coding": [{ "system": "http://loinc.org", "code": "2823-3", "display": "Potassium [Moles/volume] in Serum or Plasma" }],
-          "text": "Potassium serum"
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "2823-3",
+              "display": "Potassium [Moles/volume] in Serum or Plasma"
+            }
+          ],
+          "text": "Potassium [Moles/volume] in Serum or Plasma"
         },
-        "subject": { "reference": "Patient/lablens-patient-001" },
+        "subject": {
+          "reference": "urn:uuid:55a7fa78-4d28-5661-9350-7439ebf4db03"
+        },
         "effectiveDateTime": "2026-01-29",
-        "valueQuantity": { "value": 4.8, "unit": "mmol/L", "system": "http://unitsofmeasure.org", "code": "mmol/L" },
-        "referenceRange": [{ "low": { "value": 3.5, "unit": "mmol/L" }, "high": { "value": 5.0, "unit": "mmol/L" } }]
+        "valueQuantity": {
+          "value": 4.8,
+          "unit": "mmol/L",
+          "system": "http://unitsofmeasure.org",
+          "code": "mmol/L"
+        },
+        "referenceRange": [
+          {
+            "low": {
+              "value": 3.5,
+              "unit": "mmol/L"
+            },
+            "high": {
+              "value": 5.0,
+              "unit": "mmol/L"
+            }
+          }
+        ]
       },
-      "request": { "method": "PUT", "url": "Observation/lablens-001-obs-k-3mo" }
+      "request": {
+        "method": "POST",
+        "url": "Observation",
+        "ifNoneExist": "identifier=https://lablens.example.org/synthea-equivalent|patient-001-obs-2"
+      }
     },
     {
-      "fullUrl": "urn:uuid:lablens-001-obs-k-12mo",
+      "fullUrl": "urn:uuid:bd68b25c-41d7-5f1b-b065-3abd25607bc3",
       "resource": {
         "resourceType": "Observation",
-        "id": "lablens-001-obs-k-12mo",
+        "id": "bd68b25c-41d7-5f1b-b065-3abd25607bc3",
+        "identifier": [
+          {
+            "system": "https://lablens.example.org/synthea-equivalent",
+            "value": "patient-001-obs-3"
+          }
+        ],
         "status": "final",
         "code": {
-          "coding": [{ "system": "http://loinc.org", "code": "2823-3", "display": "Potassium [Moles/volume] in Serum or Plasma" }],
-          "text": "Potassium serum"
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "2823-3",
+              "display": "Potassium [Moles/volume] in Serum or Plasma"
+            }
+          ],
+          "text": "Potassium [Moles/volume] in Serum or Plasma"
         },
-        "subject": { "reference": "Patient/lablens-patient-001" },
+        "subject": {
+          "reference": "urn:uuid:55a7fa78-4d28-5661-9350-7439ebf4db03"
+        },
         "effectiveDateTime": "2025-04-29",
-        "valueQuantity": { "value": 4.6, "unit": "mmol/L", "system": "http://unitsofmeasure.org", "code": "mmol/L" },
-        "referenceRange": [{ "low": { "value": 3.5, "unit": "mmol/L" }, "high": { "value": 5.0, "unit": "mmol/L" } }]
+        "valueQuantity": {
+          "value": 4.6,
+          "unit": "mmol/L",
+          "system": "http://unitsofmeasure.org",
+          "code": "mmol/L"
+        },
+        "referenceRange": [
+          {
+            "low": {
+              "value": 3.5,
+              "unit": "mmol/L"
+            },
+            "high": {
+              "value": 5.0,
+              "unit": "mmol/L"
+            }
+          }
+        ]
       },
-      "request": { "method": "PUT", "url": "Observation/lablens-001-obs-k-12mo" }
+      "request": {
+        "method": "POST",
+        "url": "Observation",
+        "ifNoneExist": "identifier=https://lablens.example.org/synthea-equivalent|patient-001-obs-3"
+      }
     }
   ]
 }

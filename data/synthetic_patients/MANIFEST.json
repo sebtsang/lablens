@@ -1,51 +1,143 @@
 {
   "patients": [
     {
-      "name": "Patient_001_Urgent_Potassium",
+      "short_id": "patient-001",
+      "patient_uuid": "55a7fa78-4d28-5661-9350-7439ebf4db03",
+      "patient_name": "Patient_001_Urgent_Potassium Demo",
       "bundle_file": "patient_001_urgent_potassium.json",
-      "patient_id": "lablens-patient-001",
-      "demo_beat": "The agent identified three independent potassium-raising drugs coexisting in this patient's regimen. None alone would push K+ to 6.1; the combination explains the magnitude.",
-      "expected_urgency": "URGENT",
-      "expected_lab": { "type": "POTASSIUM", "current_value": 6.1, "unit": "mmol/L" },
-      "active_medications_summary": [
-        "Lisinopril 20 mg daily",
-        "Spironolactone 25 mg daily",
-        "Ibuprofen 400 mg TID",
-        "Furosemide 40 mg daily"
+      "demographics": {
+        "gender": "female",
+        "birth_date": "1958-03-14"
+      },
+      "active_medications": [
+        "Lisinopril 20 MG Oral Tablet",
+        "Spironolactone 25 MG Oral Tablet",
+        "Ibuprofen 400 MG Oral Tablet",
+        "Furosemide 40 MG Oral Tablet"
       ],
-      "active_conditions_summary": [
-        "CKD stage 3b",
+      "active_conditions": [
+        "Chronic kidney disease stage 3b",
         "Essential hypertension",
         "Heart failure with reduced ejection fraction"
       ],
-      "notes": "Headline demo case (CLAUDE.md §10 Patient 1). Trend RISING: 4.6 → 4.8 → 5.4 → 6.1 over 12 months. Three K+-raising drug classes coexist."
+      "lab_observations": [
+        {
+          "loinc": "2823-3",
+          "value": 6.1,
+          "unit": "mmol/L",
+          "effective": "2026-04-29"
+        },
+        {
+          "loinc": "2823-3",
+          "value": 5.4,
+          "unit": "mmol/L",
+          "effective": "2026-04-08"
+        },
+        {
+          "loinc": "2823-3",
+          "value": 4.8,
+          "unit": "mmol/L",
+          "effective": "2026-01-29"
+        },
+        {
+          "loinc": "2823-3",
+          "value": 4.6,
+          "unit": "mmol/L",
+          "effective": "2025-04-29"
+        }
+      ]
     },
     {
-      "name": "Patient_002_Creatinine_Trend",
+      "short_id": "patient-002",
+      "patient_uuid": "0524fad6-6eca-50e3-9659-700f689bee6a",
+      "patient_name": "Patient_002_Creatinine_Trend Demo",
       "bundle_file": "patient_002_creatinine_trend.json",
-      "patient_id": "lablens-patient-002",
-      "demo_beat": "Single result interpreted in context: this isn't 'mild renal impairment' — it's an acute change in a patient where two drugs (an ARB and an NSAID) compromise renal perfusion synergistically.",
-      "expected_urgency": "URGENT",
-      "expected_lab": { "type": "CREATININE", "current_value": 2.1, "unit": "mg/dL" },
-      "active_medications_summary": [
-        "Losartan 100 mg daily",
-        "Metformin 1000 mg BID",
-        "Naproxen 500 mg BID (started 2 weeks ago)"
+      "demographics": {
+        "gender": "male",
+        "birth_date": "1953-07-22"
+      },
+      "active_medications": [
+        "Losartan 100 MG Oral Tablet",
+        "Metformin 1000 MG Oral Tablet",
+        "Naproxen 500 MG Oral Tablet"
       ],
-      "active_conditions_summary": ["CKD stage 3a", "Essential hypertension", "Type 2 diabetes mellitus"],
-      "notes": "CLAUDE.md §10 Patient 2. Creatinine 2.1 with prior 1.4 → large delta (0.7) AND rising. Naproxen + Losartan combination."
+      "active_conditions": [
+        "Chronic kidney disease stage 3a",
+        "Essential hypertension",
+        "Type 2 diabetes mellitus"
+      ],
+      "lab_observations": [
+        {
+          "loinc": "2160-0",
+          "value": 2.1,
+          "unit": "mg/dL",
+          "effective": "2026-04-29"
+        },
+        {
+          "loinc": "2160-0",
+          "value": 1.4,
+          "unit": "mg/dL",
+          "effective": "2026-03-29"
+        },
+        {
+          "loinc": "2160-0",
+          "value": 1.3,
+          "unit": "mg/dL",
+          "effective": "2025-10-29"
+        },
+        {
+          "loinc": "2160-0",
+          "value": 1.4,
+          "unit": "mg/dL",
+          "effective": "2025-04-29"
+        }
+      ]
     },
     {
-      "name": "Patient_003_A1c_Chronic",
+      "short_id": "patient-003",
+      "patient_uuid": "de59abc7-e45f-504c-a775-a726b2487793",
+      "patient_name": "Patient_003_A1c_Chronic Demo",
       "bundle_file": "patient_003_a1c_chronic.json",
-      "patient_id": "lablens-patient-003",
-      "demo_beat": "The agent correctly distinguishes between an emergency (potassium 6.1) and a scheduled follow-up (poorly controlled A1c). Even at 9.8%, HbA1c never escalates to URGENT in this demo — it's chronic.",
-      "expected_urgency": "SOON",
-      "expected_lab": { "type": "HBA1C", "current_value": 9.8, "unit": "%" },
-      "active_medications_summary": ["Metformin 1000 mg BID", "Amlodipine 5 mg daily"],
-      "active_conditions_summary": ["Type 2 diabetes mellitus (8 years)", "Essential hypertension"],
-      "notes": "CLAUDE.md §10 Patient 3. A1c 9.8% with established T2DM. No A1c-raising medications. SOON, not URGENT."
+      "demographics": {
+        "gender": "male",
+        "birth_date": "1971-02-08"
+      },
+      "active_medications": [
+        "Metformin 1000 MG Oral Tablet",
+        "Amlodipine 5 MG Oral Tablet"
+      ],
+      "active_conditions": [
+        "Type 2 diabetes mellitus",
+        "Essential hypertension"
+      ],
+      "lab_observations": [
+        {
+          "loinc": "4548-4",
+          "value": 9.8,
+          "unit": "%",
+          "effective": "2026-04-29"
+        },
+        {
+          "loinc": "4548-4",
+          "value": 9.2,
+          "unit": "%",
+          "effective": "2025-12-29"
+        },
+        {
+          "loinc": "4548-4",
+          "value": 8.8,
+          "unit": "%",
+          "effective": "2025-06-29"
+        },
+        {
+          "loinc": "4548-4",
+          "value": 8.5,
+          "unit": "%",
+          "effective": "2024-12-29"
+        }
+      ]
     }
   ],
-  "patient_4_strategy": "Patient 4 (INSUFFICIENT_DATA case) is intentionally left to be created as a fresh empty patient inside Prompt Opinion's UI rather than as a Bundle. A patient with no medications, no conditions, no prior labs, and a borderline K+ of 5.3 will trigger our INSUFFICIENT_DATA fail-safe in classify_lab_followup_urgency."
+  "patient_4_strategy": "Patient 4 (INSUFFICIENT_DATA case) is intentionally not generated as a Bundle. Create an empty patient in Prompt Opinion's UI directly, with a single K+ observation of 5.3 and no medications/conditions, to trigger the fail-safe.",
+  "generator": "scripts/generate_synthetic_bundles.py"
 }
