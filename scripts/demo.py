@@ -22,9 +22,13 @@ from pathlib import Path
 from typing import Any, cast
 
 from anthropic import Anthropic
+from dotenv import load_dotenv
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
+
+# Auto-load .env from repo root so GEMINI_API_KEY etc. are picked up
+load_dotenv(REPO_ROOT / ".env", override=False)
 
 # ruff: noqa: E402
 from dataclasses import dataclass
