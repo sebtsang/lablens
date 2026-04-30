@@ -1,12 +1,22 @@
-# Dependencies
-node_modules/
-.pnp
-.pnp.js
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.pyright/
 
 # Build output
-dist/
 build/
-*.tsbuildinfo
+dist/
 
 # Environment / secrets
 .env
@@ -18,7 +28,6 @@ build/
 # Logs
 logs/
 *.log
-npm-debug.log*
 
 # OS / editor
 .DS_Store
@@ -29,7 +38,8 @@ Thumbs.db
 
 # Test artifacts
 coverage/
-.nyc_output/
+.coverage
+htmlcov/
 
 # FHIR / clinical artifacts (paranoia — never commit anything that could be PHI)
 data/real_patients/
