@@ -1,0 +1,20 @@
+{
+  "patients": [
+    {
+      "name": "Patient_001_Urgent_Potassium",
+      "bundle_file": "patient_001_urgent_potassium.json",
+      "patient_id": "lablens-patient-001",
+      "demo_beat": "The agent identified three independent potassium-raising drugs coexisting in this patient's regimen. None alone would push K+ to 6.1; the combination explains the magnitude.",
+      "expected_urgency": "URGENT",
+      "expected_lab": {
+        "type": "POTASSIUM",
+        "current_value": 6.1,
+        "unit": "mmol/L"
+      },
+      "active_medications_summary": ["Lisinopril 20 mg daily", "Spironolactone 25 mg daily", "Ibuprofen 400 mg TID", "Furosemide 40 mg daily"],
+      "active_conditions_summary": ["CKD stage 3b", "Essential hypertension", "Heart failure with reduced ejection fraction"],
+      "notes": "Headline demo case (CLAUDE.md §10 Patient 1). Trend is RISING: 4.6 → 4.8 → 5.4 → 6.1 over 12 months. Three K+-raising drug classes (ACE inhibitor, K+-sparing diuretic, NSAID) coexist."
+    }
+  ],
+  "additional_patients_strategy": "Per the v2 plan, Patients 2-4 will use Prompt Opinion's built-in synthetic patients if their data covers the trend / chronic-disease / insufficient-data cases. Authoring more bundles only if the built-ins don't fit."
+}

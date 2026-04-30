@@ -1,0 +1,241 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:lablens-patient-001",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "lablens-patient-001",
+        "identifier": [
+          { "system": "https://lablens.example.org/patient", "value": "LABLENS-001" }
+        ],
+        "name": [{ "family": "Demo", "given": ["Patient_001_Urgent_Potassium"] }],
+        "gender": "female",
+        "birthDate": "1958-03-14"
+      },
+      "request": { "method": "PUT", "url": "Patient/lablens-patient-001" }
+    },
+    {
+      "fullUrl": "urn:uuid:lablens-001-cond-ckd",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "lablens-001-cond-ckd",
+        "subject": { "reference": "Patient/lablens-patient-001" },
+        "clinicalStatus": {
+          "coding": [
+            { "system": "http://terminology.hl7.org/CodeSystem/condition-clinical", "code": "active" }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            { "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status", "code": "confirmed" }
+          ]
+        },
+        "code": {
+          "coding": [{ "system": "http://snomed.info/sct", "code": "433144002", "display": "Chronic kidney disease stage 3b" }],
+          "text": "Chronic kidney disease stage 3b"
+        },
+        "onsetDateTime": "2022-06-01"
+      },
+      "request": { "method": "PUT", "url": "Condition/lablens-001-cond-ckd" }
+    },
+    {
+      "fullUrl": "urn:uuid:lablens-001-cond-htn",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "lablens-001-cond-htn",
+        "subject": { "reference": "Patient/lablens-patient-001" },
+        "clinicalStatus": { "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/condition-clinical", "code": "active" }] },
+        "code": {
+          "coding": [{ "system": "http://snomed.info/sct", "code": "59621000", "display": "Essential hypertension" }],
+          "text": "Essential hypertension"
+        },
+        "onsetDateTime": "2015-04-12"
+      },
+      "request": { "method": "PUT", "url": "Condition/lablens-001-cond-htn" }
+    },
+    {
+      "fullUrl": "urn:uuid:lablens-001-cond-hf",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "lablens-001-cond-hf",
+        "subject": { "reference": "Patient/lablens-patient-001" },
+        "clinicalStatus": { "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/condition-clinical", "code": "active" }] },
+        "code": {
+          "coding": [{ "system": "http://snomed.info/sct", "code": "703272007", "display": "Heart failure with reduced ejection fraction" }],
+          "text": "Heart failure with reduced ejection fraction"
+        },
+        "onsetDateTime": "2020-11-03"
+      },
+      "request": { "method": "PUT", "url": "Condition/lablens-001-cond-hf" }
+    },
+    {
+      "fullUrl": "urn:uuid:lablens-001-med-lisinopril",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "lablens-001-med-lisinopril",
+        "status": "active",
+        "intent": "order",
+        "subject": { "reference": "Patient/lablens-patient-001" },
+        "authoredOn": "2024-08-10",
+        "medicationCodeableConcept": {
+          "coding": [{ "system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "314076", "display": "Lisinopril 20 MG Oral Tablet" }],
+          "text": "Lisinopril 20 mg oral tablet"
+        },
+        "dosageInstruction": [{ "text": "20 mg PO daily" }]
+      },
+      "request": { "method": "PUT", "url": "MedicationRequest/lablens-001-med-lisinopril" }
+    },
+    {
+      "fullUrl": "urn:uuid:lablens-001-med-spironolactone",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "lablens-001-med-spironolactone",
+        "status": "active",
+        "intent": "order",
+        "subject": { "reference": "Patient/lablens-patient-001" },
+        "authoredOn": "2024-09-05",
+        "medicationCodeableConcept": {
+          "coding": [{ "system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "313096", "display": "Spironolactone 25 MG Oral Tablet" }],
+          "text": "Spironolactone 25 mg oral tablet"
+        },
+        "dosageInstruction": [{ "text": "25 mg PO daily" }]
+      },
+      "request": { "method": "PUT", "url": "MedicationRequest/lablens-001-med-spironolactone" }
+    },
+    {
+      "fullUrl": "urn:uuid:lablens-001-med-ibuprofen",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "lablens-001-med-ibuprofen",
+        "status": "active",
+        "intent": "order",
+        "subject": { "reference": "Patient/lablens-patient-001" },
+        "authoredOn": "2026-04-08",
+        "medicationCodeableConcept": {
+          "coding": [{ "system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "310965", "display": "Ibuprofen 400 MG Oral Tablet" }],
+          "text": "Ibuprofen 400 mg oral tablet"
+        },
+        "dosageInstruction": [{ "text": "400 mg PO TID for back pain (started 3 weeks ago)" }]
+      },
+      "request": { "method": "PUT", "url": "MedicationRequest/lablens-001-med-ibuprofen" }
+    },
+    {
+      "fullUrl": "urn:uuid:lablens-001-med-furosemide",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "lablens-001-med-furosemide",
+        "status": "active",
+        "intent": "order",
+        "subject": { "reference": "Patient/lablens-patient-001" },
+        "authoredOn": "2024-08-10",
+        "medicationCodeableConcept": {
+          "coding": [{ "system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "313988", "display": "Furosemide 40 MG Oral Tablet" }],
+          "text": "Furosemide 40 mg oral tablet"
+        },
+        "dosageInstruction": [{ "text": "40 mg PO daily" }]
+      },
+      "request": { "method": "PUT", "url": "MedicationRequest/lablens-001-med-furosemide" }
+    },
+    {
+      "fullUrl": "urn:uuid:lablens-001-allergy-pcn",
+      "resource": {
+        "resourceType": "AllergyIntolerance",
+        "id": "lablens-001-allergy-pcn",
+        "patient": { "reference": "Patient/lablens-patient-001" },
+        "code": {
+          "coding": [{ "system": "http://snomed.info/sct", "code": "91936005", "display": "Allergy to penicillin" }],
+          "text": "Penicillin"
+        },
+        "criticality": "high",
+        "reaction": [
+          { "manifestation": [{ "text": "Hives" }] }
+        ]
+      },
+      "request": { "method": "PUT", "url": "AllergyIntolerance/lablens-001-allergy-pcn" }
+    },
+    {
+      "fullUrl": "urn:uuid:lablens-001-encounter-recent",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "lablens-001-encounter-recent",
+        "status": "finished",
+        "class": { "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode", "code": "AMB", "display": "Ambulatory" },
+        "type": [{ "text": "Office visit — heart failure follow-up" }],
+        "subject": { "reference": "Patient/lablens-patient-001" },
+        "period": { "start": "2026-04-15", "end": "2026-04-15" },
+        "reasonCode": [{ "text": "Heart failure follow-up" }]
+      },
+      "request": { "method": "PUT", "url": "Encounter/lablens-001-encounter-recent" }
+    },
+    {
+      "fullUrl": "urn:uuid:lablens-001-obs-k-current",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "lablens-001-obs-k-current",
+        "status": "final",
+        "code": {
+          "coding": [{ "system": "http://loinc.org", "code": "2823-3", "display": "Potassium [Moles/volume] in Serum or Plasma" }],
+          "text": "Potassium serum"
+        },
+        "subject": { "reference": "Patient/lablens-patient-001" },
+        "effectiveDateTime": "2026-04-29",
+        "valueQuantity": { "value": 6.1, "unit": "mmol/L", "system": "http://unitsofmeasure.org", "code": "mmol/L" },
+        "referenceRange": [{ "low": { "value": 3.5, "unit": "mmol/L" }, "high": { "value": 5.0, "unit": "mmol/L" } }]
+      },
+      "request": { "method": "PUT", "url": "Observation/lablens-001-obs-k-current" }
+    },
+    {
+      "fullUrl": "urn:uuid:lablens-001-obs-k-3wk",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "lablens-001-obs-k-3wk",
+        "status": "final",
+        "code": {
+          "coding": [{ "system": "http://loinc.org", "code": "2823-3", "display": "Potassium [Moles/volume] in Serum or Plasma" }],
+          "text": "Potassium serum"
+        },
+        "subject": { "reference": "Patient/lablens-patient-001" },
+        "effectiveDateTime": "2026-04-08",
+        "valueQuantity": { "value": 5.4, "unit": "mmol/L", "system": "http://unitsofmeasure.org", "code": "mmol/L" },
+        "referenceRange": [{ "low": { "value": 3.5, "unit": "mmol/L" }, "high": { "value": 5.0, "unit": "mmol/L" } }]
+      },
+      "request": { "method": "PUT", "url": "Observation/lablens-001-obs-k-3wk" }
+    },
+    {
+      "fullUrl": "urn:uuid:lablens-001-obs-k-3mo",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "lablens-001-obs-k-3mo",
+        "status": "final",
+        "code": {
+          "coding": [{ "system": "http://loinc.org", "code": "2823-3", "display": "Potassium [Moles/volume] in Serum or Plasma" }],
+          "text": "Potassium serum"
+        },
+        "subject": { "reference": "Patient/lablens-patient-001" },
+        "effectiveDateTime": "2026-01-29",
+        "valueQuantity": { "value": 4.8, "unit": "mmol/L", "system": "http://unitsofmeasure.org", "code": "mmol/L" },
+        "referenceRange": [{ "low": { "value": 3.5, "unit": "mmol/L" }, "high": { "value": 5.0, "unit": "mmol/L" } }]
+      },
+      "request": { "method": "PUT", "url": "Observation/lablens-001-obs-k-3mo" }
+    },
+    {
+      "fullUrl": "urn:uuid:lablens-001-obs-k-12mo",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "lablens-001-obs-k-12mo",
+        "status": "final",
+        "code": {
+          "coding": [{ "system": "http://loinc.org", "code": "2823-3", "display": "Potassium [Moles/volume] in Serum or Plasma" }],
+          "text": "Potassium serum"
+        },
+        "subject": { "reference": "Patient/lablens-patient-001" },
+        "effectiveDateTime": "2025-04-29",
+        "valueQuantity": { "value": 4.6, "unit": "mmol/L", "system": "http://unitsofmeasure.org", "code": "mmol/L" },
+        "referenceRange": [{ "low": { "value": 3.5, "unit": "mmol/L" }, "high": { "value": 5.0, "unit": "mmol/L" } }]
+      },
+      "request": { "method": "PUT", "url": "Observation/lablens-001-obs-k-12mo" }
+    }
+  ]
+}
