@@ -1,0 +1,163 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:lablens-patient-003",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "lablens-patient-003",
+        "identifier": [
+          { "system": "https://lablens.example.org/patient", "value": "LABLENS-003" }
+        ],
+        "name": [{ "family": "Demo", "given": ["Patient_003_A1c_Chronic"] }],
+        "gender": "male",
+        "birthDate": "1971-02-08"
+      },
+      "request": { "method": "PUT", "url": "Patient/lablens-patient-003" }
+    },
+    {
+      "fullUrl": "urn:uuid:lablens-003-cond-dm",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "lablens-003-cond-dm",
+        "subject": { "reference": "Patient/lablens-patient-003" },
+        "clinicalStatus": { "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/condition-clinical", "code": "active" }] },
+        "code": {
+          "coding": [{ "system": "http://snomed.info/sct", "code": "44054006", "display": "Type 2 diabetes mellitus" }],
+          "text": "Type 2 diabetes mellitus"
+        },
+        "onsetDateTime": "2018-03-12"
+      },
+      "request": { "method": "PUT", "url": "Condition/lablens-003-cond-dm" }
+    },
+    {
+      "fullUrl": "urn:uuid:lablens-003-cond-htn",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "lablens-003-cond-htn",
+        "subject": { "reference": "Patient/lablens-patient-003" },
+        "clinicalStatus": { "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/condition-clinical", "code": "active" }] },
+        "code": {
+          "coding": [{ "system": "http://snomed.info/sct", "code": "59621000", "display": "Essential hypertension" }],
+          "text": "Essential hypertension"
+        },
+        "onsetDateTime": "2019-08-04"
+      },
+      "request": { "method": "PUT", "url": "Condition/lablens-003-cond-htn" }
+    },
+    {
+      "fullUrl": "urn:uuid:lablens-003-med-metformin",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "lablens-003-med-metformin",
+        "status": "active",
+        "intent": "order",
+        "subject": { "reference": "Patient/lablens-patient-003" },
+        "authoredOn": "2018-04-01",
+        "medicationCodeableConcept": {
+          "coding": [{ "system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "861007", "display": "Metformin 1000 MG Oral Tablet" }],
+          "text": "Metformin 1000 mg oral tablet"
+        },
+        "dosageInstruction": [{ "text": "1000 mg PO BID" }]
+      },
+      "request": { "method": "PUT", "url": "MedicationRequest/lablens-003-med-metformin" }
+    },
+    {
+      "fullUrl": "urn:uuid:lablens-003-med-amlodipine",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "lablens-003-med-amlodipine",
+        "status": "active",
+        "intent": "order",
+        "subject": { "reference": "Patient/lablens-patient-003" },
+        "authoredOn": "2019-09-15",
+        "medicationCodeableConcept": {
+          "coding": [{ "system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "197361", "display": "Amlodipine 5 MG Oral Tablet" }],
+          "text": "Amlodipine 5 mg oral tablet"
+        },
+        "dosageInstruction": [{ "text": "5 mg PO daily" }]
+      },
+      "request": { "method": "PUT", "url": "MedicationRequest/lablens-003-med-amlodipine" }
+    },
+    {
+      "fullUrl": "urn:uuid:lablens-003-encounter-last",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "lablens-003-encounter-last",
+        "status": "finished",
+        "class": { "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode", "code": "AMB", "display": "Ambulatory" },
+        "type": [{ "text": "Office visit — diabetes follow-up (missed scheduled 3-month visit, last seen 5 months ago)" }],
+        "subject": { "reference": "Patient/lablens-patient-003" },
+        "period": { "start": "2025-11-29", "end": "2025-11-29" },
+        "reasonCode": [{ "text": "Diabetes management" }]
+      },
+      "request": { "method": "PUT", "url": "Encounter/lablens-003-encounter-last" }
+    },
+    {
+      "fullUrl": "urn:uuid:lablens-003-obs-a1c-current",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "lablens-003-obs-a1c-current",
+        "status": "final",
+        "code": {
+          "coding": [{ "system": "http://loinc.org", "code": "4548-4", "display": "Hemoglobin A1c/Hemoglobin.total in Blood" }],
+          "text": "HbA1c"
+        },
+        "subject": { "reference": "Patient/lablens-patient-003" },
+        "effectiveDateTime": "2026-04-29",
+        "valueQuantity": { "value": 9.8, "unit": "%", "system": "http://unitsofmeasure.org", "code": "%" },
+        "referenceRange": [{ "low": { "value": 4.0, "unit": "%" }, "high": { "value": 5.6, "unit": "%" } }]
+      },
+      "request": { "method": "PUT", "url": "Observation/lablens-003-obs-a1c-current" }
+    },
+    {
+      "fullUrl": "urn:uuid:lablens-003-obs-a1c-4mo",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "lablens-003-obs-a1c-4mo",
+        "status": "final",
+        "code": {
+          "coding": [{ "system": "http://loinc.org", "code": "4548-4", "display": "Hemoglobin A1c/Hemoglobin.total in Blood" }],
+          "text": "HbA1c"
+        },
+        "subject": { "reference": "Patient/lablens-patient-003" },
+        "effectiveDateTime": "2025-12-29",
+        "valueQuantity": { "value": 9.2, "unit": "%", "system": "http://unitsofmeasure.org", "code": "%" }
+      },
+      "request": { "method": "PUT", "url": "Observation/lablens-003-obs-a1c-4mo" }
+    },
+    {
+      "fullUrl": "urn:uuid:lablens-003-obs-a1c-10mo",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "lablens-003-obs-a1c-10mo",
+        "status": "final",
+        "code": {
+          "coding": [{ "system": "http://loinc.org", "code": "4548-4", "display": "Hemoglobin A1c/Hemoglobin.total in Blood" }],
+          "text": "HbA1c"
+        },
+        "subject": { "reference": "Patient/lablens-patient-003" },
+        "effectiveDateTime": "2025-06-29",
+        "valueQuantity": { "value": 8.8, "unit": "%", "system": "http://unitsofmeasure.org", "code": "%" }
+      },
+      "request": { "method": "PUT", "url": "Observation/lablens-003-obs-a1c-10mo" }
+    },
+    {
+      "fullUrl": "urn:uuid:lablens-003-obs-a1c-16mo",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "lablens-003-obs-a1c-16mo",
+        "status": "final",
+        "code": {
+          "coding": [{ "system": "http://loinc.org", "code": "4548-4", "display": "Hemoglobin A1c/Hemoglobin.total in Blood" }],
+          "text": "HbA1c"
+        },
+        "subject": { "reference": "Patient/lablens-patient-003" },
+        "effectiveDateTime": "2024-12-29",
+        "valueQuantity": { "value": 8.5, "unit": "%", "system": "http://unitsofmeasure.org", "code": "%" }
+      },
+      "request": { "method": "PUT", "url": "Observation/lablens-003-obs-a1c-16mo" }
+    }
+  ]
+}
