@@ -11,6 +11,8 @@ from datetime import date, timedelta
 from statistics import median
 from typing import Any
 
+import httpx
+
 from lablens.clinical.drug_classes import lookup_drug_class
 from lablens.clinical.lab_loinc_codes import LAB_DISPLAY, LAB_UNIT, LOINC_BY_LAB_TYPE, LabType
 from lablens.clinical.models import (
@@ -75,12 +77,15 @@ def _parse_conditions(bundle: dict[str, Any] | None) -> list[ConditionRef]:
     return out
 
 
-def _parse_medication_request(resource: dict[str, Any]) -> MedicationRef:
-    medication_cc = resource.get("medicationCodeableConcept")
+def _parse_medication_resource(resource: dict[str, Any]) -> MedicationRef:
+    """Handle both MedicationRequest and MedicationStatement shapes — they overlap."""
+    medication_cc = resource.get("medicationCodeableConcept") or resource.get("medication", {}).get(
+        "concept"
+    )
     display, code = _coding_display_and_code(medication_cc)
     dose: str | None = None
     frequency: str | None = None
-    instructions = resource.get("dosageInstruction") or []
+    instructions = resource.get("dosageInstruction") or resource.get("dosage") or []
     if instructions:
         first = instructions[0]
         if isinstance(first, dict):
@@ -107,7 +112,22 @@ def _parse_medication_request(resource: dict[str, Any]) -> MedicationRef:
 
 
 def _parse_medications(bundle: dict[str, Any] | None) -> list[MedicationRef]:
-    return [_parse_medication_request(r) for r in _bundle_entries(bundle)]
+    return [_parse_medication_resource(r) for r in _bundle_entries(bundle)]
+
+
+def _dedupe_medications(meds: list[MedicationRef]) -> list[MedicationRef]:
+    """Same drug may appear in both MedicationRequest and MedicationStatement bundles.
+    Deduplicate by display+code, keeping the first occurrence (which has dose info).
+    """
+    seen: set[tuple[str, str]] = set()
+    out: list[MedicationRef] = []
+    for med in meds:
+        key = (med.display.lower(), med.code)
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(med)
+    return out
 
 
 def _parse_allergies(bundle: dict[str, Any] | None) -> list[AllergyRef]:
@@ -156,23 +176,44 @@ def _six_months_ago_iso() -> str:
 
 
 async def fetch_patient_context(client: FhirClient, patient_id: str) -> PatientContext:
-    """Pull active conditions, meds, allergies, recent encounters for a patient."""
+    """Pull active conditions, meds, allergies, recent encounters for a patient.
+
+    Queries both MedicationRequest and MedicationStatement and merges the results
+    (deduplicated). Different FHIR servers / synthetic data sources put active meds
+    in different resource types, so we look in both.
+    """
+
+    async def _safe_search(resource_type: str, params: dict[str, str]) -> dict[str, Any] | None:
+        """Some FHIR servers reject queries on resources they don't expose (403/404).
+        Treat those as "no data" rather than crashing the whole tool call.
+        """
+        try:
+            return await client.search(resource_type, params)
+        except httpx.HTTPStatusError:
+            return None
+
     patient = await client.read(f"Patient/{patient_id}")
-    conditions_bundle = await client.search(
+    conditions_bundle = await _safe_search(
         "Condition", {"patient": patient_id, "clinical-status": "active"}
     )
-    meds_bundle = await client.search(
+    med_request_bundle = await _safe_search(
         "MedicationRequest", {"patient": patient_id, "status": "active"}
     )
-    allergies_bundle = await client.search("AllergyIntolerance", {"patient": patient_id})
-    encounters_bundle = await client.search(
+    med_statement_bundle = await _safe_search(
+        "MedicationStatement", {"patient": patient_id, "status": "active"}
+    )
+    allergies_bundle = await _safe_search("AllergyIntolerance", {"patient": patient_id})
+    encounters_bundle = await _safe_search(
         "Encounter", {"patient": patient_id, "date": f"ge{_six_months_ago_iso()}"}
+    )
+    merged_meds = _dedupe_medications(
+        _parse_medications(med_request_bundle) + _parse_medications(med_statement_bundle)
     )
     return PatientContext(
         patient_id=patient_id,
         demographics=_parse_demographics(patient),
         active_conditions=_parse_conditions(conditions_bundle),
-        active_medications=_parse_medications(meds_bundle),
+        active_medications=merged_meds,
         allergies=_parse_allergies(allergies_bundle),
         recent_encounters=_parse_encounters(encounters_bundle),
     )
