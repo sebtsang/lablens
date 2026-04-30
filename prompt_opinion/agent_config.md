@@ -10,7 +10,10 @@ This is the step-by-step for configuring LabLens inside the Prompt Opinion platf
 
 - A deployed LabLens MCP server reachable at a stable HTTPS URL ending in `/mcp` (Railway is our deploy target — see `railway.json`).
 - A Prompt Opinion account at [app.promptopinion.ai](https://app.promptopinion.ai).
-- An LLM provider configured (Google AI Studio is fine for the orchestrator side; Anthropic for our MCP server's medication-interaction call is configured separately via `ANTHROPIC_API_KEY` in Railway).
+- An LLM provider configured for our MCP server's medication-interaction call. Pick **one**, set it on Railway as env vars:
+  - **Gemini** (default, free): `LABLENS_LLM_PROVIDER=gemini` + `GEMINI_API_KEY=<your key>` (get one at [aistudio.google.com](https://aistudio.google.com/app/apikey))
+  - **Anthropic**: `LABLENS_LLM_PROVIDER=anthropic` + `ANTHROPIC_API_KEY=sk-ant-...`
+  - **Ollama** (local-only, not for Railway): `LABLENS_LLM_PROVIDER=ollama` + ensure `ollama serve` is running and `OLLAMA_MODEL=llama3.2` (or your choice)
 
 ---
 
@@ -132,5 +135,5 @@ Judges should be able to:
 |---|---|---|
 | Test button shows "tools: []" | Streamable HTTP transport not selected, or capability advertisement broken | Verify `/mcp` returns the `ai.promptopinion/fhir-context` extension on initialize |
 | Tools fail with "FHIR context missing" | "Pass FHIR context" checkbox unchecked on the MCP server config | Re-check the box and save |
-| `analyze_medication_lab_interactions` returns fallback "Mechanism not well established" | `ANTHROPIC_API_KEY` not set on Railway, or model name out of date | Set the env var; check the Railway logs for `interaction_llm_validation_failed` |
+| `analyze_medication_lab_interactions` returns fallback "Mechanism not well established" | LLM provider key (`GEMINI_API_KEY` or `ANTHROPIC_API_KEY`) not set on Railway, or model name out of date | Set the appropriate env var; check the Railway logs for `interaction_llm_validation_failed` |
 | Server returns 502/timeout | Railway instance sleeping or crashed | Check Railway logs; redeploy if needed |

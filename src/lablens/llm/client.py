@@ -1,11 +1,15 @@
-"""Anthropic client wrapper for the single LLM call site.
+"""LLM call site for analyze_medication_lab_interactions (CLAUDE.md §8).
 
-Per CLAUDE.md §8: model claude-opus-4-7, temperature 0.2, max 800 tokens. Validates
-the JSON output against `LlmInteractionResponse`. Retries up to twice on validation
-failure (per §8); after that, returns a fallback response with a warning logged.
+The single LLM call point in the system. Three backends are supported:
 
-Per CLAUDE.md §17, this is the ONLY LLM call in the system. Do not call from
-other tools.
+- **Gemini** (default) — uses GEMINI_API_KEY (or GOOGLE_API_KEY). Free via Prompt Opinion.
+- **Anthropic** — uses ANTHROPIC_API_KEY. claude-opus-4-7.
+- **Ollama** — uses OLLAMA_BASE_URL (default http://localhost:11434) and OLLAMA_MODEL
+  (default llama3.2). For local development.
+
+Provider is selected by `LABLENS_LLM_PROVIDER` env var. If unset, defaults to "gemini".
+The provider dispatch is bypassed when an `anthropic_client` is passed explicitly
+(test path) — that keeps the existing test fixtures working without churn.
 """
 
 from __future__ import annotations
@@ -13,32 +17,71 @@ from __future__ import annotations
 import json
 import logging
 import os
-from typing import Protocol
+from typing import TYPE_CHECKING
 
+import httpx
 from anthropic import Anthropic
 from pydantic import ValidationError
 
 from lablens.llm.prompts import SYSTEM_PROMPT, build_user_prompt
 from lablens.llm.schemas import LlmInteractionResponse, MechanismEntry
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
 _log = logging.getLogger(__name__)
 
-DEFAULT_MODEL = "claude-opus-4-7"
+# Anthropic config
+ANTHROPIC_MODEL = "claude-opus-4-7"
+# Gemini config — gemini-2.0-flash is the recommended default (fast, free tier)
+GEMINI_MODEL = "gemini-2.0-flash"
+# Ollama config
+OLLAMA_DEFAULT_MODEL = "llama3.2"
+OLLAMA_DEFAULT_URL = "http://localhost:11434"
+
 DEFAULT_TEMPERATURE = 0.2
 DEFAULT_MAX_TOKENS = 800
 MAX_RETRIES = 2
 
 
-class _AnthropicLike(Protocol):
-    """Subset of the Anthropic client we depend on (for testability)."""
-
-    @property
-    def messages(self) -> object: ...
+# ---------------------------------------------------------------------------
+# Per-provider completers — each takes (system, user) and returns raw text
+# ---------------------------------------------------------------------------
 
 
-def _extract_json_text(message_content: list[object]) -> str:
-    """Pull the first text block out of an Anthropic Messages response."""
-    for block in message_content:
+def _gemini_complete(system: str, user: str) -> str:
+    api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+    if not api_key:
+        raise RuntimeError("GEMINI_API_KEY (or GOOGLE_API_KEY) must be set for Gemini provider")
+    # Imported lazily so users without google-generativeai installed can still
+    # use Anthropic or Ollama without ImportError on module load.
+    import google.generativeai as genai  # pyright: ignore[reportMissingTypeStubs]
+
+    genai.configure(api_key=api_key)  # pyright: ignore[reportPrivateImportUsage]
+    model = genai.GenerativeModel(  # pyright: ignore[reportPrivateImportUsage]
+        model_name=GEMINI_MODEL, system_instruction=system
+    )
+    response = model.generate_content(
+        user,
+        generation_config={
+            "temperature": DEFAULT_TEMPERATURE,
+            "max_output_tokens": DEFAULT_MAX_TOKENS,
+            "response_mime_type": "application/json",
+        },
+    )
+    return response.text or ""
+
+
+def _anthropic_complete(system: str, user: str, *, client: Anthropic | None = None) -> str:
+    api_client = client or Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+    message = api_client.messages.create(
+        model=ANTHROPIC_MODEL,
+        max_tokens=DEFAULT_MAX_TOKENS,
+        temperature=DEFAULT_TEMPERATURE,
+        system=system,
+        messages=[{"role": "user", "content": user}],
+    )
+    for block in message.content:
         if hasattr(block, "type") and getattr(block, "type", None) == "text":
             text = getattr(block, "text", "")
             if isinstance(text, str):
@@ -46,10 +89,36 @@ def _extract_json_text(message_content: list[object]) -> str:
     return ""
 
 
+def _ollama_complete(system: str, user: str) -> str:
+    base_url = os.environ.get("OLLAMA_BASE_URL", OLLAMA_DEFAULT_URL).rstrip("/")
+    model = os.environ.get("OLLAMA_MODEL", OLLAMA_DEFAULT_MODEL)
+    response = httpx.post(
+        f"{base_url}/api/chat",
+        json={
+            "model": model,
+            "stream": False,
+            "format": "json",
+            "messages": [
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ],
+            "options": {"temperature": DEFAULT_TEMPERATURE},
+        },
+        timeout=120.0,
+    )
+    response.raise_for_status()
+    data = response.json()
+    return data.get("message", {}).get("content", "")
+
+
+# ---------------------------------------------------------------------------
+# Top-level call site
+# ---------------------------------------------------------------------------
+
+
 def _strip_code_fences(text: str) -> str:
     stripped = text.strip()
     if stripped.startswith("```"):
-        # Strip leading ```json or ``` and trailing ```
         first_newline = stripped.find("\n")
         if first_newline != -1:
             stripped = stripped[first_newline + 1 :]
@@ -77,33 +146,55 @@ def _fallback_response(identified: list[tuple[str, str, str]]) -> LlmInteraction
     )
 
 
+def _resolve_provider(anthropic_client: Anthropic | None) -> str:
+    if anthropic_client is not None:
+        return "anthropic"
+    name = os.environ.get("LABLENS_LLM_PROVIDER", "gemini").strip().lower()
+    if name not in {"gemini", "anthropic", "ollama"}:
+        raise ValueError(
+            f"Unknown LABLENS_LLM_PROVIDER: {name!r}. Expected one of: gemini, anthropic, ollama"
+        )
+    return name
+
+
+def _completer_for(provider: str, anthropic_client: Anthropic | None) -> Callable[[str, str], str]:
+    if provider == "gemini":
+        return _gemini_complete
+    if provider == "ollama":
+        return _ollama_complete
+    # provider == "anthropic"
+    return lambda system, user: _anthropic_complete(system, user, client=anthropic_client)
+
+
 def call_interaction_llm(
     *,
     lab_type: str,
     identified_interactions: list[tuple[str, str, str]],
-    client: Anthropic | None = None,
+    anthropic_client: Anthropic | None = None,
 ) -> LlmInteractionResponse:
-    """Single LLM call site. Returns validated `LlmInteractionResponse` or fallback."""
+    """Single LLM call site.
+
+    Provider selection:
+    - Pass `anthropic_client` explicitly (e.g. in tests) → uses Anthropic with that client
+    - Otherwise read `LABLENS_LLM_PROVIDER` (gemini | anthropic | ollama; default gemini)
+
+    Validates the JSON output with `LlmInteractionResponse`. Retries up to twice
+    on validation failure (per CLAUDE.md §8); after that returns a fallback.
+    """
     if not identified_interactions:
         return LlmInteractionResponse(
             mechanisms=[],
             cumulative_risk_note="No identified medication interactions for this lab type.",
         )
 
-    api_client = client or Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+    provider = _resolve_provider(anthropic_client)
+    completer = _completer_for(provider, anthropic_client)
     user_prompt = build_user_prompt(lab_type, identified_interactions)
 
     last_error: Exception | None = None
     for attempt in range(MAX_RETRIES + 1):
         try:
-            message = api_client.messages.create(
-                model=DEFAULT_MODEL,
-                max_tokens=DEFAULT_MAX_TOKENS,
-                temperature=DEFAULT_TEMPERATURE,
-                system=SYSTEM_PROMPT,
-                messages=[{"role": "user", "content": user_prompt}],
-            )
-            raw_text = _extract_json_text(list(message.content))
+            raw_text = completer(SYSTEM_PROMPT, user_prompt)
             payload = _strip_code_fences(raw_text)
             data = json.loads(payload)
             return LlmInteractionResponse.model_validate(data)
@@ -111,12 +202,16 @@ def call_interaction_llm(
             last_error = exc
             _log.warning(
                 "interaction_llm_validation_failed",
-                extra={"attempt": attempt + 1, "lab_type": lab_type},
+                extra={"attempt": attempt + 1, "lab_type": lab_type, "provider": provider},
             )
             continue
 
     _log.warning(
         "interaction_llm_all_retries_failed",
-        extra={"lab_type": lab_type, "error": str(last_error) if last_error else "unknown"},
+        extra={
+            "lab_type": lab_type,
+            "provider": provider,
+            "error": str(last_error) if last_error else "unknown",
+        },
     )
     return _fallback_response(identified_interactions)

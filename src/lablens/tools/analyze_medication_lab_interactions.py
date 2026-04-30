@@ -138,7 +138,7 @@ def run(
             (item["medication_display"], item["drug_class"], item["direction"])
             for item in identified
         ],
-        client=anthropic_client,
+        anthropic_client=anthropic_client,
     )
 
     # Merge mechanism narration back into the structured findings, matching by name

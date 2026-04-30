@@ -27,7 +27,10 @@ The headline demo case: 68-year-old female with CKD/HTN/HFrEF, on Lisinopril + S
 - FastAPI + uvicorn (HTTP host)
 - Pydantic v2 (validation)
 - httpx async (FHIR client)
-- Anthropic SDK, `claude-opus-4-7` (one LLM call site, mechanism narration only)
+- One configurable LLM call site (mechanism narration only). Three backends supported via `LABLENS_LLM_PROVIDER`:
+  - `gemini` (default) — `gemini-2.0-flash` via Google AI Studio (free)
+  - `anthropic` — `claude-opus-4-7` (paid)
+  - `ollama` — local `llama3.2` (free, offline)
 - pytest + pytest-asyncio, Ruff, Pyright (standard mode), uv
 - Railway (deployment, no Docker)
 
@@ -38,8 +41,11 @@ The headline demo case: 68-year-old female with CKD/HTN/HFrEF, on Lisinopril + S
 brew install uv
 uv sync --extra dev
 
-# Set the LLM key (optional locally; falls back to a stub mechanism if absent)
-export ANTHROPIC_API_KEY=sk-ant-...
+# Pick an LLM backend (default is Gemini)
+export LABLENS_LLM_PROVIDER=gemini    # or "anthropic" or "ollama"
+export GEMINI_API_KEY=...             # if using Gemini (free; aistudio.google.com)
+# export ANTHROPIC_API_KEY=sk-ant-... # if using Anthropic
+# (Ollama needs no key — just run `ollama serve` locally)
 
 # Run the MCP server
 uv run uvicorn lablens.server:app --reload --port 8000

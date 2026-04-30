@@ -1,10 +1,11 @@
 """Local end-to-end demo runner: walk all 3 authored synthetic patients through the
-full LabLens pipeline using mocked FHIR (the JSON bundles) and a real or stub
-Anthropic call.
+full LabLens pipeline using mocked FHIR (the JSON bundles) and a real or stub LLM.
 
 Usage:
-    uv run python scripts/demo.py                    # uses stubbed mechanism narration
-    ANTHROPIC_API_KEY=sk-... uv run python scripts/demo.py --live-llm   # real LLM
+    uv run python scripts/demo.py                            # stubbed LLM (no key needed)
+    GEMINI_API_KEY=... uv run python scripts/demo.py --live-llm                              # uses Gemini (default)
+    LABLENS_LLM_PROVIDER=anthropic ANTHROPIC_API_KEY=sk-ant-... uv run python scripts/demo.py --live-llm
+    LABLENS_LLM_PROVIDER=ollama uv run python scripts/demo.py --live-llm                     # uses local Ollama
 
 This is a debugging / video-backup script. Production demo runs through Prompt
 Opinion's UI per prompt_opinion/agent_config.md.
@@ -208,11 +209,6 @@ async def _run_case(
     fake = _bundle_to_fake_fhir(bundle_path, patient_id)
     fhir = cast("FhirClient", fake)
 
-    if live_llm:
-        anth = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
-    else:
-        anth = cast("Anthropic", _StubAnthropic(_STUB_LLM_BY_LAB[lab_type]))
-
     print(f"  • Loading patient context for {patient_id}...")
     patient_context = await fetch_patient_context(fhir, patient_id)
     print(
@@ -229,7 +225,13 @@ async def _run_case(
     )
 
     print("  • Analyzing medication-lab interactions...")
-    interactions = analyze(lab_type, patient_context.active_medications, anthropic_client=anth)
+    if live_llm:
+        # Real LLM call — provider chosen by LABLENS_LLM_PROVIDER env (default gemini)
+        interactions = analyze(lab_type, patient_context.active_medications)
+    else:
+        # Stub: route through the Anthropic test-injection path with a canned response
+        anth = cast("Anthropic", _StubAnthropic(_STUB_LLM_BY_LAB[lab_type]))
+        interactions = analyze(lab_type, patient_context.active_medications, anthropic_client=anth)
     for it in interactions.interactions_found:
         print(f"    - {it.medication_display} ({it.drug_class}, {it.direction})")
         print(f"      → {it.mechanism_summary}")
@@ -261,12 +263,21 @@ async def main() -> None:
     parser.add_argument(
         "--live-llm",
         action="store_true",
-        help="Use the real Anthropic API (requires ANTHROPIC_API_KEY).",
+        help="Use a real LLM (provider chosen by LABLENS_LLM_PROVIDER, default Gemini).",
     )
     args = parser.parse_args()
 
-    if args.live_llm and not os.environ.get("ANTHROPIC_API_KEY"):
-        sys.exit("ANTHROPIC_API_KEY must be set for --live-llm")
+    if args.live_llm:
+        provider = os.environ.get("LABLENS_LLM_PROVIDER", "gemini").lower()
+        required_keys = {
+            "gemini": ("GEMINI_API_KEY", "GOOGLE_API_KEY"),
+            "anthropic": ("ANTHROPIC_API_KEY",),
+            "ollama": (),
+        }
+        keys = required_keys.get(provider, ())
+        if keys and not any(os.environ.get(k) for k in keys):
+            sys.exit(f"{' or '.join(keys)} must be set for --live-llm with provider={provider}")
+        print(f"[live-llm] using provider={provider}")
 
     for title, bundle_file, lab_type, current_value, unit in CASES:
         await _run_case(title, bundle_file, lab_type, current_value, unit, live_llm=args.live_llm)
