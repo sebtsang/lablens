@@ -33,8 +33,10 @@ _log = logging.getLogger(__name__)
 
 # Anthropic config
 ANTHROPIC_MODEL = "claude-opus-4-7"
-# Gemini config — gemini-2.0-flash is the recommended default (fast, free tier)
-GEMINI_MODEL = "gemini-2.0-flash"
+# Gemini config. gemini-2.5-flash is the default; can override with GEMINI_MODEL env.
+# (gemini-2.0-flash is intentionally NOT the default — its free tier is limit:0
+# on freshly-created Google AI Studio projects as of April 2026.)
+GEMINI_DEFAULT_MODEL = "gemini-2.5-flash"
 # Ollama config
 OLLAMA_DEFAULT_MODEL = "llama3.2"
 OLLAMA_DEFAULT_URL = "http://localhost:11434"
@@ -53,21 +55,27 @@ def _gemini_complete(system: str, user: str) -> str:
     api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
     if not api_key:
         raise RuntimeError("GEMINI_API_KEY (or GOOGLE_API_KEY) must be set for Gemini provider")
-    # Imported lazily so users without google-generativeai installed can still
-    # use Anthropic or Ollama without ImportError on module load.
-    import google.generativeai as genai  # pyright: ignore[reportMissingTypeStubs]
+    model_name = os.environ.get("GEMINI_MODEL", GEMINI_DEFAULT_MODEL)
+    # Lazy import so this module can load even if google-genai isn't installed
+    from google import genai
+    from google.genai import types
 
-    genai.configure(api_key=api_key)  # pyright: ignore[reportPrivateImportUsage]
-    model = genai.GenerativeModel(  # pyright: ignore[reportPrivateImportUsage]
-        model_name=GEMINI_MODEL, system_instruction=system
-    )
-    response = model.generate_content(
-        user,
-        generation_config={
-            "temperature": DEFAULT_TEMPERATURE,
-            "max_output_tokens": DEFAULT_MAX_TOKENS,
-            "response_mime_type": "application/json",
-        },
+    client = genai.Client(api_key=api_key)
+    config_kwargs: dict[str, object] = {
+        "system_instruction": system,
+        "temperature": DEFAULT_TEMPERATURE,
+        "max_output_tokens": DEFAULT_MAX_TOKENS,
+        "response_mime_type": "application/json",
+    }
+    # 2.5-series Gemini models use "thinking tokens" by default and can spend
+    # the entire output budget on reasoning before producing JSON. Disable it
+    # for our use case — we want fast, predictable JSON-out.
+    if "2.5" in model_name or "3" in model_name:
+        config_kwargs["thinking_config"] = types.ThinkingConfig(thinking_budget=0)
+    response = client.models.generate_content(
+        model=model_name,
+        contents=user,
+        config=types.GenerateContentConfig(**config_kwargs),  # type: ignore[arg-type]
     )
     return response.text or ""
 

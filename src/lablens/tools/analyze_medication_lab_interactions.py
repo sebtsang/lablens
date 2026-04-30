@@ -28,6 +28,30 @@ from lablens.clinical.models import (
     MedicationRef,
 )
 from lablens.llm.client import call_interaction_llm
+from lablens.llm.schemas import MechanismEntry
+
+_FALLBACK_MECHANISM = "Mechanism not well established"
+
+
+def _match_mechanism(medication_display: str, mechanisms: list[MechanismEntry]) -> str:
+    """Find the LLM mechanism summary for a medication. Tolerates name abbreviation."""
+    target = medication_display.lower()
+    for entry in mechanisms:
+        if entry.medication.lower() == target:
+            return entry.summary
+    # Fuzzy: substring match in either direction (lisinopril vs Lisinopril 20 mg ...)
+    for entry in mechanisms:
+        ent = entry.medication.lower()
+        if ent in target or target in ent:
+            return entry.summary
+    # First-word match (rxnorm ingredient name)
+    target_first = target.split()[0] if target else ""
+    if target_first:
+        for entry in mechanisms:
+            if entry.medication.lower().split()[0:1] == [target_first]:
+                return entry.summary
+    return _FALLBACK_MECHANISM
+
 
 # Direction of effect by drug class for each lab type. Lookup-only; the LLM
 # does not get to invent these.
@@ -141,11 +165,13 @@ def run(
         anthropic_client=anthropic_client,
     )
 
-    # Merge mechanism narration back into the structured findings, matching by name
-    summary_by_med = {entry.medication: entry.summary for entry in llm_response.mechanisms}
+    # Merge mechanism narration back into the structured findings.
+    # LLMs often abbreviate medication names ("Lisinopril" vs "Lisinopril 20 mg oral
+    # tablet"), so we match case-insensitively in either direction rather than
+    # requiring an exact string match.
     interactions: list[MedicationInteraction] = []
     for item in identified:
-        summary = summary_by_med.get(item["medication_display"], "Mechanism not well established")
+        summary = _match_mechanism(item["medication_display"], llm_response.mechanisms)
         interactions.append(
             MedicationInteraction(
                 medication_display=item["medication_display"],
