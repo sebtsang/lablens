@@ -136,8 +136,27 @@
           "effective": "2024-12-29"
         }
       ]
+    },
+    {
+      "short_id": "patient-004",
+      "patient_uuid": "d62e9787-0c30-5dcd-94c4-d4d30c2c3bd6",
+      "patient_name": "Patient_004_Insufficient_Data Demo",
+      "bundle_file": "patient_004_insufficient_data.json",
+      "demographics": {
+        "gender": "female",
+        "birth_date": "1981-09-22"
+      },
+      "active_medications": [],
+      "active_conditions": [],
+      "lab_observations": [
+        {
+          "loinc": "2823-3",
+          "value": 5.3,
+          "unit": "mmol/L",
+          "effective": "2026-04-29"
+        }
+      ]
     }
   ],
-  "patient_4_strategy": "Patient 4 (INSUFFICIENT_DATA case) is intentionally not generated as a Bundle. Create an empty patient in Prompt Opinion's UI directly, with a single K+ observation of 5.3 and no medications/conditions, to trigger the fail-safe.",
   "generator": "scripts/generate_synthetic_bundles.py"
 }

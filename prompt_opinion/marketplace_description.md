@@ -15,7 +15,7 @@ The bottleneck in clinical inbox triage isn't reading a lab — it's prioritizin
 LabLens exposes four MCP tools that work together:
 - **get_patient_context** — pulls active conditions, active medications (with drug-class enrichment), allergies, and recent encounters from the workspace's FHIR data.
 - **get_lab_trend** — recent values plus a coarse RISING/FALLING/STABLE label for POTASSIUM, CREATININE, or HBA1C.
-- **analyze_medication_lab_interactions** — the differentiator. A deterministic drug-class lookup identifies which medications interact with the lab type; a single Anthropic Claude call generates plain-language mechanism summaries and a cumulative risk narrative. The LLM is constrained to mechanism narration only — it cannot add medications or invent drug classes.
+- **analyze_medication_lab_interactions** — the differentiator. A deterministic drug-class lookup identifies which medications interact with the lab type; one constrained LLM call generates plain-language mechanism summaries and a cumulative risk narrative. The LLM is constrained to mechanism narration only — it cannot add medications or invent drug classes.
 - **classify_lab_followup_urgency** — pure deterministic risk stratifier. Same inputs always produce same outputs. Returns urgency, a transparent rule trace, recommended review path, and a safety disclaimer. Fails safe to INSUFFICIENT_DATA when inputs are incomplete rather than guessing.
 
 LabLens is **clinician-facing**. It does not message patients. It does not autonomously place orders. Every output carries the disclaimer "For clinician review only. Synthetic demo. Not autonomous medical advice."

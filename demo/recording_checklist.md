@@ -4,7 +4,7 @@ Run through this BEFORE you hit record. Each item that fails costs you a take.
 
 ## Tech setup
 - [ ] Railway deploy is live and `/health` returns ok at the public URL
-- [ ] `ANTHROPIC_API_KEY` is set in Railway env (otherwise mechanism narration falls back to "not well established")
+- [ ] LLM env is set in Railway (`LABLENS_LLM_PROVIDER=gemini` + `GEMINI_API_KEY`, or Anthropic equivalents)
 - [ ] Browser zoom is 100% (so text is sharp)
 - [ ] Screen recorder is set to ≥1080p, 30fps
 - [ ] Microphone test — record 5 seconds, listen back, no clipping

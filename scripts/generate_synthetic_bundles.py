@@ -249,7 +249,37 @@ PATIENT_3 = PatientDef(
     ],
 )
 
-ALL_PATIENTS = [PATIENT_1, PATIENT_2, PATIENT_3]
+# ---------------------------------------------------------------------------
+# Patient 4 — INSUFFICIENT_DATA fail-safe (no meds, no conditions, single lab)
+# ---------------------------------------------------------------------------
+# Demonstrates that the agent fails safely when it lacks the context to
+# stratify confidently. Single borderline K+ value (5.3), no prior values,
+# no medications, no conditions. Expected: INSUFFICIENT_DATA.
+PATIENT_4 = PatientDef(
+    short_id="patient-004",
+    given="Patient_004_Insufficient_Data",
+    family="Demo",
+    gender="female",
+    birth_date="1981-09-22",
+    conditions=[],
+    medications=[],
+    allergies=[],
+    encounter_date="",
+    encounter_reason="",
+    observations=[
+        LabObs(
+            "2823-3",
+            "Potassium [Moles/volume] in Serum or Plasma",
+            5.3,
+            "mmol/L",
+            "2026-04-29",
+            3.5,
+            5.0,
+        ),
+    ],
+)
+
+ALL_PATIENTS = [PATIENT_1, PATIENT_2, PATIENT_3, PATIENT_4]
 
 
 # ---------------------------------------------------------------------------
@@ -483,6 +513,7 @@ def main() -> None:
         "patient-001": "patient_001_urgent_potassium.json",
         "patient-002": "patient_002_creatinine_trend.json",
         "patient-003": "patient_003_a1c_chronic.json",
+        "patient-004": "patient_004_insufficient_data.json",
     }
 
     for p in ALL_PATIENTS:
@@ -512,11 +543,6 @@ def main() -> None:
 
     manifest = {
         "patients": manifest_patients,
-        "patient_4_strategy": (
-            "Patient 4 (INSUFFICIENT_DATA case) is intentionally not generated as a Bundle. "
-            "Create an empty patient in Prompt Opinion's UI directly, with a single K+ "
-            "observation of 5.3 and no medications/conditions, to trigger the fail-safe."
-        ),
         "generator": "scripts/generate_synthetic_bundles.py",
     }
     (OUT_DIR / "MANIFEST.json").write_text(json.dumps(manifest, indent=2) + "\n")

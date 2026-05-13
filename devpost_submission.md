@@ -17,7 +17,7 @@ LabLens turns an incoming abnormal lab result into a risk-stratified, medication
 - **MCP server**: Python 3.12 + FastMCP, deployed to Railway. Mounts at `POST /mcp` with streamable HTTP transport. Advertises the `ai.promptopinion/fhir-context` capability with the standard SHARP scopes.
 - **SHARP context propagation**: per-request reader for `X-FHIR-Server-URL`, `X-FHIR-Access-Token`, `X-Patient-ID`. The server forwards the bearer token on outbound FHIR calls but never logs or persists it.
 - **Validation**: Pydantic v2 models for every tool's input and output shape, including the LLM JSON output.
-- **The differentiator**: `analyze_medication_lab_interactions` uses a deterministic drug-class lookup (validated against pharmacology references) followed by a single Anthropic Claude call (claude-opus-4-7, temperature 0.2) to generate plain-language mechanism summaries. The LLM is constrained to mechanism narration — it cannot add medications or invent drug classes.
+- **The differentiator**: `analyze_medication_lab_interactions` uses a deterministic drug-class lookup (validated against pharmacology references) followed by one constrained LLM call to generate plain-language mechanism summaries. The deployed backend can use Gemini by default or Anthropic when configured; either way, the LLM is constrained to mechanism narration and cannot add medications or invent drug classes.
 - **The classifier**: pure deterministic Python. Same inputs always produce same outputs. Every rule branch is unit-tested. Fails safe to INSUFFICIENT_DATA when inputs are incomplete.
 - **Submission path**: Path A (MCP server) plus a no-code A2A agent configured inside Prompt Opinion's workspace builder.
 
@@ -35,7 +35,7 @@ Architecture and patterns derived from `prompt-opinion/po-community-mcp` (the of
 - **The medication-interaction tool genuinely demonstrates the AI factor.** Three potassium-raising drug classes coexisting in one patient's regimen is exactly the synthesis a rule engine can't do. The demo case (Patient 1) lands cleanly: K+ 6.1 with ACE inhibitor + potassium-sparing diuretic + NSAID + furosemide produces an URGENT classification with a rule trace that names all three contributing drug classes.
 - **Deterministic-with-rule-traces design.** Every classification carries a human-readable list of which rules fired and why. Clinicians can audit any decision. We unit-test every rule branch.
 - **Fail-safe behavior.** When trend data is missing AND no medication interactions are identified AND the value is borderline, the agent returns INSUFFICIENT_DATA rather than guessing. This is a feature, not a limitation.
-- **77 passing tests** including end-to-end integration tests against the Patient 1 FHIR bundle.
+- **80 passing tests** including end-to-end integration tests across all four synthetic FHIR bundles.
 
 ## What we learned
 

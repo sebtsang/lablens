@@ -60,14 +60,21 @@ This is the step-by-step for configuring LabLens inside the Prompt Opinion platf
      patient's lab result, follow this exact workflow:
 
      1. Call get_patient_context to retrieve the patient's active conditions,
-        medications, allergies, and recent encounters.
-     2. Call get_lab_trend with the relevant lab type (POTASSIUM, CREATININE, or
-        HBA1C) to retrieve recent values and trend.
-     3. Call analyze_medication_lab_interactions with the same lab type and the
-        patient's active_medications from step 1. This returns mechanism-explained
-        drug interactions for that lab.
-     4. Call classify_lab_followup_urgency with the lab type, current value, unit,
-        and the outputs of steps 1-3. This is the risk stratifier.
+        medications, allergies, and recent encounters. NO arguments needed; the
+        patient is in the SHARP context header.
+     2. Call get_lab_trend with: lab_type (POTASSIUM, CREATININE, or HBA1C).
+     3. Call analyze_medication_lab_interactions with TWO required arguments:
+        - lab_type: same value as step 2.
+        - active_medications: the EXACT active_medications array from step 1's
+          output. Do not omit, summarize, or rename this field.
+     4. Call classify_lab_followup_urgency with SIX required arguments:
+        - lab_type: same value as steps 2 and 3.
+        - current_value: the new lab value (number).
+        - unit: e.g. "mmol/L", "mg/dL", "%".
+        - patient_context: the FULL output of step 1, passed verbatim.
+        - lab_trend: the FULL output of step 2, passed verbatim.
+        - medication_interactions: the FULL output of step 3, passed verbatim.
+        Do NOT call this tool until steps 1-3 have all returned successfully.
      5. Present the result to the clinician: urgency level, recommended review
         path, the rule trace (why this urgency was assigned), the medication
         mechanisms (why these drugs matter), and the safety disclaimer.
@@ -112,7 +119,7 @@ Per the rules, publishing is required for Stage 1 (Marketplace Verified). Per th
 4. Fill in:
    - **Display name**: `LabLens — Lab Triage Agent`
    - **One-line description**: `Medication-aware lab triage with deterministic risk + LLM-narrated pharmacology mechanisms.`
-   - **Long description**: see `prompt_opinion/marketplace_description.md` (to be authored on D9).
+   - **Long description**: see `prompt_opinion/marketplace_description.md`.
 5. Click **Publish**.
 6. Confirm the listing appears as discoverable in the Marketplace.
 

@@ -1,0 +1,85 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:d62e9787-0c30-5dcd-94c4-d4d30c2c3bd6",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "d62e9787-0c30-5dcd-94c4-d4d30c2c3bd6",
+        "identifier": [
+          {
+            "system": "https://lablens.example.org/synthea-equivalent",
+            "value": "patient-004"
+          }
+        ],
+        "name": [
+          {
+            "family": "Demo",
+            "given": [
+              "Patient_004_Insufficient_Data"
+            ]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1981-09-22"
+      },
+      "request": {
+        "method": "POST",
+        "url": "Patient",
+        "ifNoneExist": "identifier=https://lablens.example.org/synthea-equivalent|patient-004"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:a04b5032-6ba8-5765-a5e8-6884a111fb2f",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "a04b5032-6ba8-5765-a5e8-6884a111fb2f",
+        "identifier": [
+          {
+            "system": "https://lablens.example.org/synthea-equivalent",
+            "value": "patient-004-obs-0"
+          }
+        ],
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "2823-3",
+              "display": "Potassium [Moles/volume] in Serum or Plasma"
+            }
+          ],
+          "text": "Potassium [Moles/volume] in Serum or Plasma"
+        },
+        "subject": {
+          "reference": "urn:uuid:d62e9787-0c30-5dcd-94c4-d4d30c2c3bd6"
+        },
+        "effectiveDateTime": "2026-04-29",
+        "valueQuantity": {
+          "value": 5.3,
+          "unit": "mmol/L",
+          "system": "http://unitsofmeasure.org",
+          "code": "mmol/L"
+        },
+        "referenceRange": [
+          {
+            "low": {
+              "value": 3.5,
+              "unit": "mmol/L"
+            },
+            "high": {
+              "value": 5.0,
+              "unit": "mmol/L"
+            }
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "Observation",
+        "ifNoneExist": "identifier=https://lablens.example.org/synthea-equivalent|patient-004-obs-0"
+      }
+    }
+  ]
+}

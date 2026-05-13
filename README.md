@@ -28,7 +28,7 @@ The headline demo case: 68-year-old female with CKD/HTN/HFrEF, on Lisinopril + S
 - Pydantic v2 (validation)
 - httpx async (FHIR client)
 - One configurable LLM call site (mechanism narration only). Three backends supported via `LABLENS_LLM_PROVIDER`:
-  - `gemini` (default) — `gemini-2.0-flash` via Google AI Studio (free)
+  - `gemini` (default) — `gemini-2.5-flash` via Google AI Studio (free)
   - `anthropic` — `claude-opus-4-7` (paid)
   - `ollama` — local `llama3.2` (free, offline)
 - pytest + pytest-asyncio, Ruff, Pyright (standard mode), uv
@@ -97,10 +97,10 @@ src/lablens/
 │   └── schemas.py                 LlmInteractionResponse
 └── utils/
     └── logging.py                 (logging helpers — never logs PHI/tokens)
-data/synthetic_patients/           Patient 1 FHIR Bundle + manifest
+data/synthetic_patients/           Four synthetic patient FHIR Bundles + manifest
 prompt_opinion/                    Platform configuration guide + marketplace listing copy
 demo/                              Demo video script + recording checklist
-tests/                             77 passing tests (clinical, tools, integration)
+tests/                             80 passing tests (clinical, tools, integration)
 ```
 
 ## Attribution
