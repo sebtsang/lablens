@@ -35,6 +35,7 @@ def _patched_get_capabilities(
     notification_options: object, experimental_capabilities: object
 ) -> Any:
     caps = _original_get_capabilities(notification_options, experimental_capabilities)
+    caps.experimental["fhir_context_required"] = True
     caps.model_extra["extensions"] = {
         "ai.promptopinion/fhir-context": {
             "scopes": [
